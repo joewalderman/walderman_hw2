@@ -1,0 +1,52 @@
+---
+title: "jw_a1_task2"
+author: "Joe Walderman"
+date: "1/18/2021"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+library(janitor)
+library(ggfortify)
+library(gghighlight)
+library(here)
+library(plotly)
+library(stargazer)
+library(GGally)
+library(broom)
+library(ggpubr)
+library(naniar)
+```
+
+```{r}
+vars <- read.csv(here("data", "world_env_vars.csv")) %>% 
+  clean_names() %>% 
+  filter(!is.na(isothermality))
+
+vars_pca <- vars %>%
+  select(accessibility_to_cities:isothermality, ends_with("month"), ends_with("annual"), ends_with("seasonality"), wind, cloudiness) %>% 
+  drop_na() %>% 
+  scale() %>% 
+  prcomp()
+
+vars_pca$rotation
+
+vars_complete <- vars %>% 
+    drop_na(country:isothermality, ends_with("month"), ends_with("annual"), ends_with("seasonality"), wind, cloudiness)
+
+#using penguin pca but taking data from penguin complete, matching
+autoplot(vars_pca,
+         data = vars_complete,
+         loadings = TRUE,
+         loadings.label = TRUE,
+         loadings.colour = "black",
+         loadings.label.colour = "black",
+         loadings.label.vjust = -.1
+         ) +
+  scale_color_manual(values = c("blue","purple","orange")) +
+  scale_fill_manual(values = c("blue","purple","orange")) +
+  theme_minimal()
+```
+
