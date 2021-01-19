@@ -1,0 +1,40 @@
+---
+title: "jw_a1_task1"
+author: "Joe Walderman"
+date: "1/17/2021"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+library(janitor)
+library(here)
+library(readxl)
+library(lubridate)
+```
+
+## Reading in data and wrangling
+
+```{r readxl, echo=TRUE, eval=TRUE, warning=FALSE}
+amphib <- read_excel(here("data", "sierra_amphibians.xlsx") ) %>% 
+  clean_names() %>% 
+  drop_na() %>% 
+  mutate(across(where(is.character), tolower)) %>% # convert all characters to lowercase
+  mutate(date = ymd(survey_date)) %>%
+  mutate(year = year(date))
+
+amphib_count <- amphib %>% 
+  group_by(year) %>% 
+  filter(amphibian_life_stage != "eggmass")
+
+
+ggplot(data = amphib_count, aes(x = year, y = n)) +
+  geom_line(color = amphibian_life_stage)
+```
+
+```{r}
+ggplot()
+```
+
+
