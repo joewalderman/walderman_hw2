@@ -60,3 +60,5 @@ graph_a / graph_b
 
 **Figure 1**: Counts of mountain yellow-legged frogs observed in the Southern Sierra Nevada from 1995 to 2002. Top shows frog counts of adult, subadult, and tadpole individuals over time. Lower shows the lakes with the largest number of adult and subadults ovserved during this time period. The top 5 lake counts are shown, with 4 lakes tied with the 5 most observed individuals.
 
+Data Citation: Data citation: Knapp, R.A., C. Pavelka, E.E. Hegeman, and T.C. Smith. 2020. The Sierra Lakes Inventory Project: Non-Native fish and community composition of lakes and ponds in the Sierra Nevada, California ver 2. Environmental Data Initiative. https://doi.org/10.6073/pasta/d835832d7fd00d9e4466e44eea87fab3
+
