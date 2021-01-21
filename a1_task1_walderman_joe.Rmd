@@ -1,23 +1,24 @@
 ---
-title: "jw_a1_task1"
+title: "Mounain Yellow-Leggeed Frogs in the Southern Sierra Nevada"
 author: "Joe Walderman"
 date: "1/17/2021"
 output: html_document
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(echo = FALSE, message = FALSE, warning = FALSE)
 library(tidyverse)
 library(janitor)
 library(here)
 library(readxl)
 library(lubridate)
 library(patchwork)
-```
+``` 
 
-## Reading in data and wrangling
+
 
 ```{r readxl, echo=TRUE, eval=TRUE, warning=FALSE}
+## Reading in data and wrangling
 amphib <- read_excel(here("data", "sierra_amphibians.xlsx") ) %>% 
   clean_names() %>% 
   drop_na() %>% 
@@ -26,29 +27,36 @@ amphib <- read_excel(here("data", "sierra_amphibians.xlsx") ) %>%
   mutate(year = year(date))
 
 amphib_count <- amphib %>% 
-  filter(amphibian_life_stage != "eggmass") %>% 
+  filter(amphibian_life_stage != "eggmass") %>% #removing observations with eggmass
   group_by(year, amphibian_life_stage) %>%
   summarise(count = n())
 
 amphib_old <- amphib %>% 
   filter(amphibian_life_stage %in% c("adult", "subadult")) %>% 
   count(lake_id) %>% 
-  slice_max(n, n = 5) %>% 
-  arrange(-n)
+  slice_max(n, n = 5) #top 5 lakes by count
 
-amphib_old$lake_id <- as.character(amphib_old$lake_id) #converting from numeric to character for graph aesthetics
+amphib_old$lake <- as.factor(amphib_old$lake_id) #converting from numeric to factor for graph aesthetics
 
 graph_a <- ggplot(data = amphib_count, aes(x = year, y = count)) +
-  geom_line(aes(color = amphibian_life_stage))
+  geom_line(aes(color = amphibian_life_stage), size = 0.8) +
+  labs(y = "Frog Count",
+       x = "Year",
+       title = "Yearly Change in Frog Counts by Life Stage",
+       color = "Life Stage") +
+  scale_x_continuous(breaks = c(1995:2002)) +
+  theme_minimal()
 
-graph_b <- ggplot(data = amphib_old, aes(x = lake_id, y = n)) +
+graph_b <- ggplot(data = amphib_old, aes(x = reorder(lake, -n), y = n)) +
   geom_col() +
   labs(x = "Lake ID",
        y = "Frog Count",
-       title = "Adult and Sub-Adult Mountain Yellow-Legged Frogs by Lake")
+       title = "Adult and Sub-Adult Mountain Yellow-Legged Frogs by Lake") +
+  scale_y_continuous(limits = c(0, 20)) +
+  theme_minimal()
 
 graph_a / graph_b
 ```
 
-
+**Figure 1**: Counts of mountain yellow-legged frogs observed in the Southern Sierra Nevada from 1995 to 2002. Top shows frog counts of adult, subadult, and tadpole individuals over time. Lower shows the lakes with the largest number of adult and subadults ovserved during this time period. The top 5 lake counts are shown, with 4 lakes tied with the 5 most observed individuals.
 
