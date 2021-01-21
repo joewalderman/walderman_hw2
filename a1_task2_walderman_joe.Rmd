@@ -1,12 +1,12 @@
 ---
-title: "jw_a1_task2"
+title: "Country-level Climatic Variables"
 author: "Joe Walderman"
 date: "1/18/2021"
 output: html_document
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(echo = FALSE, message = FALSE, warning = FALSE)
 library(tidyverse)
 library(janitor)
 library(ggfortify)
@@ -20,6 +20,8 @@ library(ggpubr)
 library(naniar)
 ```
 
+The data used in this analysis is c through Google Earth Engine and contains remote sensing data for 237 countries and regions with information on "miscellaneous environmental and climatic variables". 49 of these observations are not included in the analysis due to a lack of sufficient data available. I will be conducting a principal components analysis (PCA), assessing the data based on their relation to the two principal components that explain the greatest variance possible. I visualize and interpret this analysis using a biplot with dimentionality (axis) based on these two principal components. The points on the biplot represent the individual observations, and their proximity to each other indicates their similarity in multivariate space. The arrows represent the loadings of each variable, their length the amount of variance, and the angles between them the correlation or lack thereof. 
+
 ```{r}
 vars <- read.csv(here("data", "world_env_vars.csv")) %>% 
   clean_names() %>% 
@@ -30,8 +32,6 @@ vars_pca <- vars %>%
   drop_na() %>% 
   scale() %>% 
   prcomp()
-
-vars_pca$rotation
 
 vars_complete <- vars %>% 
     drop_na(country:isothermality, ends_with("month"), ends_with("annual"), ends_with("seasonality"), wind, cloudiness)
@@ -50,3 +50,8 @@ autoplot(vars_pca,
   theme_minimal()
 ```
 
+* Cloudiness and driest month are highly positively correlated
+* Temperature and isothermality are highly negatively correlated
+* Wettest month and tree canopy cover are minimally correlated with warmest month
+
+Data: kaggle datasets download -d zanderventer/environmental-variables-for-world-countries
